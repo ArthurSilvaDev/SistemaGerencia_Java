@@ -5,121 +5,127 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import DTO.CaminhaoDTO;
+import javax.swing.JOptionPane;
+import java.sql.SQLException;
+
 
 public class CaminhaoDAO {
     
-    public int insert (CaminhaoDTO c){
+    Connection conn;
+    PreparedStatement pstm;
+    ResultSet rs;
+    
+    public void cadastrarCaminhao (CaminhaoDTO c){
+        
+        
         
         try{
-            int rowCount;
-            Connection conn = ConexaoDAO.getConexaoMySQL();
-            PreparedStatement ps = conn.prepareStatement("INSERT INTO Caminhao (modVeic, anoVeic, placaVeic) VALUE (?,?,?)");
-            ps.setString(1, c.getModVeic());
-            ps.setString(2, c.getAnoVeic());
-            ps.setString(3, c.getPlacaVeic());
+            conn = ConexaoDAO.getConexaoMySQL();
+            pstm = conn.prepareStatement("INSERT INTO Caminhao (modVeic, anoVeic, placaVeic) VALUE (?,?,?)");
+            pstm.setString(1, c.getModVeic());
+            pstm.setString(2, c.getAnoVeic());
+            pstm.setString(3, c.getPlacaVeic());
             
-            rowCount = ps.executeUpdate();
+            pstm.execute();
+            pstm.close();
             
-            return rowCount;
         
         
-        } catch (SQLException ex) {
-            Logger.getLogger(CaminhaoDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException erro) {
+            JOptionPane.showMessageDialog(null,"CaminhaoDAO - Cadastrar: " + erro);
         }
-        return 0; // FALHOU
     }
-    
-    public CaminhaoDTO read (int codVeic){
-        
-        try{
-            Connection conn = ConexaoDAO.getConexaoMySQL();
-            PreparedStatement ps = conn.prepareStatement("SELECT * FROM caminhao WHERE codVeic=?");
-            ps.setInt(1, codVeic);
-            ResultSet rs = ps.executeQuery();
-            
-            if(rs.next()){
-                int id = rs.getInt(1);
-                String modelo = rs.getString(2);
-                String ano = rs.getString(3);
-                String placa = rs.getString(4);
-                CaminhaoDTO c =  new CaminhaoDTO(id, modelo, ano, placa);
-                
-                return c;
-            }
-            
-            
-        }catch (SQLException ex) {
-            Logger.getLogger(CaminhaoDAO.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return null;
-    }
-    
-    
-    public ArrayList<CaminhaoDTO> list(){
+//    
+//    public CaminhaoDTO read (int codVeic){
+//        
+//        try{
+//            Connection conn = ConexaoDAO.getConexaoMySQL();
+//            PreparedStatement ps = conn.prepareStatement("SELECT * FROM caminhao WHERE codVeic=?");
+//            ps.setInt(1, codVeic);
+//            ResultSet rs = ps.executeQuery();
+//            
+//            if(rs.next()){
+//                int id = rs.getInt(1);
+//                String modelo = rs.getString(2);
+//                String ano = rs.getString(3);
+//                String placa = rs.getString(4);
+//                CaminhaoDTO c =  new CaminhaoDTO(id, modelo, ano, placa);
+//                
+//                return c;
+//            }
+//            
+//            
+//        }catch (SQLException ex) {
+//            Logger.getLogger(CaminhaoDAO.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//        return null;
+//    }
+//    
+//    
+    public ArrayList<CaminhaoDTO> PesquisarCaminhao(){
         
         ArrayList<CaminhaoDTO> minhaLista =  new ArrayList<>();
         
         try{
-            Connection conn =  ConexaoDAO.getConexaoMySQL();
-            PreparedStatement ps = conn.prepareStatement("SELECT * FROM caminhao");
-            ResultSet rs = ps.executeQuery();
+            conn =  ConexaoDAO.getConexaoMySQL();
+            pstm = conn.prepareStatement("SELECT * FROM caminhao");
+            rs = pstm.executeQuery();
             
             while(rs.next()){
-                int id = rs.getInt(1);
-                String modelo = rs.getString(2);
-                String ano = rs.getString(3);
-                String placa = rs.getString(4);
-                CaminhaoDTO c =  new CaminhaoDTO(id, modelo, ano, placa);
+                CaminhaoDTO objcaminhaodto = new CaminhaoDTO();
+                objcaminhaodto.setIdVeic(rs.getInt("codVeic"));
+                objcaminhaodto.setModVeic(rs.getString("modVeic"));
+                objcaminhaodto.setAnoVeic(rs.getString("anoVeic"));
+                objcaminhaodto.setPlacaVeic(rs.getString("placaVeic"));
                 
-                minhaLista.add(c);
+                
+                minhaLista.add(objcaminhaodto);
                 
             }
             
-        }catch (SQLException ex) {
-            Logger.getLogger(CaminhaoDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }catch (SQLException erro) {
+            JOptionPane.showMessageDialog(null,"CaminhaoDAO - Pesquisar: " + erro);
         }
         
         return minhaLista;
         
     }
     
-    public int update (CaminhaoDTO c){
+    public void alterarCaminhao (CaminhaoDTO c){
         
+        conn = ConexaoDAO.getConexaoMySQL();
         try{
             
-            int rowCount;
-            Connection conn = ConexaoDAO.getConexaoMySQL();
-            PreparedStatement ps = conn.prepareStatement("UPDATE caminhao SET modVeic=?, anoVeic=?, placaVeic=? WHERE codVeic=?");
-            ps.setString(1, c.getModVeic());
-            ps.setString(2, c.getAnoVeic());
-            ps.setString(3, c.getPlacaVeic());
-            ps.setInt(4, c.getIdVeic());
-            rowCount = ps.executeUpdate();
+          
             
-            return rowCount;
+            pstm = conn.prepareStatement("UPDATE caminhao SET modVeic=?, anoVeic=?, placaVeic=? WHERE codVeic=?");
+            pstm.setString(1, c.getModVeic());
+            pstm.setString(2, c.getAnoVeic());
+            pstm.setString(3, c.getPlacaVeic());
+            pstm.setInt(4, c.getIdVeic());
+            pstm.executeUpdate();
+            pstm.close();
             
-        }catch (SQLException ex) {
-            Logger.getLogger(CaminhaoDAO.class.getName()).log(Level.SEVERE, null, ex);
+            
+        }catch (SQLException erro) {
+            JOptionPane.showMessageDialog(null,"CaminhaoDAO - Alterar: " + erro);
         }
-        return 0;
     }
     
-    public int delete (int codVeic){
+    public void excluirCaminhao (int codVeic){
         
         try{
-            int rowCount;
-            Connection conn = ConexaoDAO.getConexaoMySQL();
-            PreparedStatement ps = conn.prepareStatement("DELETE FROM caminhao WHERE codVeic=?");
-            ps.setInt(1, codVeic);
-            rowCount = ps.executeUpdate();
+            conn = ConexaoDAO.getConexaoMySQL();
+            pstm = conn.prepareStatement("DELETE FROM caminhao WHERE codVeic=?");
+            pstm.setInt(1, codVeic);
+            pstm.executeUpdate();
+            pstm.close();
             
-            return rowCount;
             
-        }catch (SQLException ex) {
-            Logger.getLogger(CaminhaoDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }catch (SQLException erro) {
+            JOptionPane.showMessageDialog(null,"CaminhaoDAO - Excluir: " + erro);
         }
-        
-        return 0;// EM CASO DE FALHA
+       
     }
     
     
