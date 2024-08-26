@@ -4,6 +4,7 @@
  */
 package DTO;
 
+
 /**
  *
  * @author Arthu
@@ -17,18 +18,18 @@ public class FuncionarioDTO {
     
     // Construtores
 
-    public FuncionarioDTO(int codFunc, String nomeFunc, String cpfFunc, String cnhFunc) {
-        this.codFunc = codFunc;
-        this.nomeFunc = nomeFunc;
-        this.cpfFunc = cpfFunc;
-        this.cnhFunc = cnhFunc;
-    }
-
-    public FuncionarioDTO(String nomeFunc, String cpfFunc, String cnhFunc) {
-        this.nomeFunc = nomeFunc;
-        this.cpfFunc = cpfFunc;
-        this.cnhFunc = cnhFunc;
-    }
+//    public FuncionarioDTO(int codFunc, String nomeFunc, String cpfFunc, String cnhFunc) {
+//        this.codFunc = codFunc;
+//        this.nomeFunc = nomeFunc;
+//        this.cpfFunc = cpfFunc;
+//        this.cnhFunc = cnhFunc;
+//    }
+//
+//    public FuncionarioDTO(String nomeFunc, String cpfFunc, String cnhFunc) {
+//        this.nomeFunc = nomeFunc;
+//        this.cpfFunc = cpfFunc;
+//        this.cnhFunc = cnhFunc;
+//    }
     
     //GET E SET
 

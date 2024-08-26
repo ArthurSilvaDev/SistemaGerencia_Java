@@ -4,11 +4,13 @@
  */
 package DAO;
 
+import java.sql.SQLException;
 import DTO.FuncionarioDTO;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -16,118 +18,129 @@ import java.util.logging.Logger;
  */
 public class FuncionarioDAO {
     
+    Connection conn;
+    PreparedStatement pstm;
+    ResultSet rs;
     
-    public int insert (FuncionarioDTO f){
-        
-        int rowCount;
-        try( Connection conn = ConexaoDAO.getConexaoMySQL()){
-            PreparedStatement ps = conn.prepareStatement("INSERT INTO funcionario (nomeFunc, cpfFunc, cnhFunc) VALUE (?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
-            ps.setString(1, f.getNomeFunc());
-            ps.setString(2, f.getCpfFunc());
-            ps.setString(3, f.getCnhFunc());
-            rowCount = ps.executeUpdate();
+    
+    
+    public void cadastrarFuncionario (FuncionarioDTO f){
+        conn = ConexaoDAO.getConexaoMySQL();
+        try{
+            pstm = conn.prepareStatement("INSERT INTO funcionario (nomeFunc, cpfFunc, cnhFunc) VALUE (?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+            pstm.setString(1, f.getNomeFunc());
+            pstm.setString(2, f.getCpfFunc());
+            pstm.setString(3, f.getCnhFunc());
             
-            return  rowCount;
+            pstm.execute();
+            pstm.close();
+           
       
-        } catch (SQLException ex) {
-            Logger.getLogger(FuncionarioDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException erro) {
+            JOptionPane.showMessageDialog(null,"FuncionarioDAO - Cadastrar: " + erro);
         }
-        
-        return 0;
     }
-    
-    public FuncionarioDTO read (int cod){
+
+    public ArrayList<FuncionarioDTO> PesquisarFuncionario(){
+        String sql ="SELECT * FROM Funcionario";
+        conn = ConexaoDAO.getConexaoMySQL();
+        ArrayList<FuncionarioDTO> lista = new ArrayList<>();
         
         try{
-            Connection conn = ConexaoDAO.getConexaoMySQL();
-            PreparedStatement ps = conn.prepareStatement("SELECT * from Funcionario WHERE codFunc=?");
-            ps.setInt(1, cod);
             
-            ResultSet rs = ps.executeQuery();
-            
-            if(rs.next()){
-                String nome = rs.getString(2);
-                String cpf = rs.getString(3);
-                String cnh = rs.getString(4);
-               
-                
-                FuncionarioDTO f = new FuncionarioDTO(cod, nome, cpf, cnh);
-                return f;
-            }
-            
-        } catch (SQLException ex) {
-            Logger.getLogger(FuncionarioDAO.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return null;
-    }
-    
-    public ArrayList<FuncionarioDTO> list(){
-        
-        ArrayList<FuncionarioDTO> minhaLista =  new ArrayList<>();
-        
-        try{
-            Connection conn = ConexaoDAO.getConexaoMySQL();
-            PreparedStatement ps = conn.prepareStatement("SELECT * FROM Funcionario");
-            ResultSet rs = ps.executeQuery();
+            pstm = conn.prepareStatement(sql);
+            rs = pstm.executeQuery();
             
             while (rs.next()){
-                int id = rs.getInt(1);
-                String nome = rs.getString(2);
-                String cpf = rs.getString(3);
-                String cnh = rs.getString(4);
                 
-                FuncionarioDTO f = new FuncionarioDTO(id, nome, cpf, cnh);
-                minhaLista.add(f);
+                FuncionarioDTO objfuncionariodto = new FuncionarioDTO();
+                objfuncionariodto.setCodFunc(rs.getInt("codFunc"));
+                objfuncionariodto.setNomeFunc(rs.getString("nomeFunc"));
+                objfuncionariodto.setCpfFunc(rs.getString("cpfFunc"));
+                objfuncionariodto.setCnhFunc(rs.getString("cnhFunc"));
+         
+                lista.add(objfuncionariodto);
             }
             conn.close();
-        } catch (SQLException ex) {
-            Logger.getLogger(FuncionarioDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException erro) {
+            JOptionPane.showMessageDialog(null,"FuncionarioDAO - Pesquisar: " + erro);
         }
-        return minhaLista;
+        return lista;
     }
     
-    public int update (FuncionarioDTO f){
+    public void alterarFuncionario (FuncionarioDTO f){
+        
+        String sql = "UPDATE funcionario SET nomeFunc=?, cpfFunc=?, cnhFunc=? WHERE codFunc=?";
         
         try{
             
-            Connection conn = ConexaoDAO.getConexaoMySQL();
+            conn = ConexaoDAO.getConexaoMySQL();
             
-            PreparedStatement ps = conn.prepareStatement("UPDATE funcionario SET nomeFunc=?, cpfFunc=?, cnhFunc=? WHERE codFunc=?");
-            ps.setString(1, f.getNomeFunc());
-            ps.setString(2, f.getCpfFunc());
-            ps.setString(3, f.getCnhFunc());
-            ps.setInt(4, f.getCodFunc());
+            pstm = conn.prepareStatement(sql);
+            pstm.setString(1, f.getNomeFunc());
+            pstm.setString(2, f.getCpfFunc());
+            pstm.setString(3, f.getCnhFunc());
+            pstm.setInt(4, f.getCodFunc());
             
-            int rowCount = ps.executeUpdate();
-            conn.close();
-            return rowCount;
+            pstm.execute();
+            pstm.close();
             
-        }catch (SQLException ex) {
-            Logger.getLogger(FuncionarioDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }catch (SQLException erro) {
+            JOptionPane.showMessageDialog(null,"FuncionarioDAO - Alterar: " + erro);
         }
         
-        return 0; // EM CASO DE FALHA
     }
     
     
-    public int delete (int id){
+    public void excluirFuncionario (int id){
+        
+        String sql = "DELETE FROM funcionario WHERE codFunc=?";
+        
         
         try{
-            Connection conn = ConexaoDAO.getConexaoMySQL();
+            conn = ConexaoDAO.getConexaoMySQL();
             
-            PreparedStatement ps =  conn.prepareStatement("DELETE FROM funcionario WHERE codFunc=?");
-            ps.setInt(1, id);
+            pstm =  conn.prepareStatement(sql);
+            pstm.setInt(1, id);
             
-            int rowCount = ps.executeUpdate();
+            pstm.execute();
+            pstm.close();
             
-            conn.close();
-            
-            return rowCount;
-        }catch (SQLException ex) {
-            Logger.getLogger(FuncionarioDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }catch (SQLException erro) {
+            JOptionPane.showMessageDialog(null,"FuncionarioDAO - Excluir: " + erro);
         }
-        
-        return 0; // EM CASO DE FALHA
     }
     
+    public void limparTabelaCompleta(){
+        
+        String sql = "SET FOREIGN_KEY_CHECKS = 0";
+        String sql2 = "TRUNCATE TABLE funcionario";
+        
+        
+        
+        try{
+            conn = ConexaoDAO.getConexaoMySQL();
+            
+            pstm = conn.prepareStatement(sql);
+            pstm.execute();
+            
+            pstm.close();
+            
+            pstm = conn.prepareStatement(sql2);
+            pstm.execute();
+            
+            pstm.close();
+            
+////            pstm = conn.prepareStatement(sql3);
+////            pstm.execute();
+            
+            pstm.close();
+            
+        }catch(SQLException erro){
+            JOptionPane.showMessageDialog(null,"FuncionarioDAO - LimparTodaTabela: " + erro);
+            
+        }
+        
+    }
+
 }

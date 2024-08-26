@@ -10,13 +10,16 @@ package DTO;
 public class FuncionarioCaminhaoDTO {
     
     private int atCodFunc, atCodVeic;
+    private String atNomeFunc, atModVeic;
     
     //CONSTRUTOR
 
-    public FuncionarioCaminhaoDTO(int atCodFunc, int atCodVeic) {
-        this.atCodFunc = atCodFunc;
-        this.atCodVeic = atCodVeic;
-    }
+//    public FuncionarioCaminhaoDTO(int atCodFunc, int atCodVeic) {
+//        this.atCodFunc = atCodFunc;
+//        this.atCodVeic = atCodVeic;
+//    }
+
+   
 
     
     //GET E SET
@@ -37,6 +40,21 @@ public class FuncionarioCaminhaoDTO {
         this.atCodVeic = atCodVeic;
     }
     
+     public String getAtNomeFunc() {
+        return atNomeFunc;
+    }
+
+    public void setAtNomeFunc(String atNomeFunc) {
+        this.atNomeFunc = atNomeFunc;
+    }
+
+    public String getAtModVeic() {
+        return atModVeic;
+    }
+
+    public void setAtModVeic(String atModVeic) {
+        this.atModVeic = atModVeic;
+    }
     
     
 }

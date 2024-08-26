@@ -14,21 +14,21 @@ public class CaminhaoDTO {
     private String modVeic, anoVeic, placaVeic;
     
     //Construtor
-
-    public CaminhaoDTO(int idVeic, String modVeic, String anoVeic, String placaVeic) {
-        this.idVeic = idVeic;
-        this.modVeic = modVeic;
-        this.anoVeic = anoVeic;
-        this.placaVeic = placaVeic;
-    }
-    
-    
-
-    public CaminhaoDTO(String modVeic, String anoVeic, String placaVeic) {
-        this.modVeic = modVeic;
-        this.anoVeic = anoVeic;
-        this.placaVeic = placaVeic;
-    }
+//
+//    public CaminhaoDTO(int idVeic, String modVeic, String anoVeic, String placaVeic) {
+//        this.idVeic = idVeic;
+//        this.modVeic = modVeic;
+//        this.anoVeic = anoVeic;
+//        this.placaVeic = placaVeic;
+//    }
+//    
+//    
+//
+//    public CaminhaoDTO(String modVeic, String anoVeic, String placaVeic) {
+//        this.modVeic = modVeic;
+//        this.anoVeic = anoVeic;
+//        this.placaVeic = placaVeic;
+//    }
     
     //GET AND SET
 
